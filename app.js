@@ -27,14 +27,20 @@ connection.connect(function(err){
 })
 
 app.post('/submit',function(req,res){
-    
-    var sql="INSERT INTO `student_data`(`id`,`name`, `roll_no`) VALUES (null,'"+ req.body.name +"','"+ req.body.roll +"')";
-    connection.query(sql, function (err) {
-        if (err) throw err
-        res.render('index',{title:'Data Saved', message:'Saved Successfully!!'})
-      })
+  connection.query("SELECT * from student_data where roll_no= '"+ req.body.roll +"'", function(err, result, field){
+    if(result.length === 0){
+      var sql="INSERT INTO `student_data`(`id`,`name`, `roll_no`) VALUES (null,'"+ req.body.name +"','"+ req.body.roll +"')";
+      connection.query(sql, function (err) {
+          if (err) throw err
+          res.render('index',{title:'Data Saved', message:'Saved Successfully!!'})
+        })
+      }else{
+        res.render('index',{title:'Data not Saved', message:'Roll No already exists!!'})
+      } 
       
 })
+})
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
